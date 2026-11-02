@@ -5,9 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>APEX VYBE</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif; -webkit-tap-highlight-color: transparent; }
         body, html { width: 100%; height: 100%; overflow: hidden; background: #000; color: #fff; }
         
+        /* Main Feed Container */
         #feed-container {
             width: 100%; height: 100%;
             overflow-y: scroll;
@@ -16,116 +17,270 @@
         }
         #feed-container::-webkit-scrollbar { display: none; }
 
+        /* Video Card Slide */
         .video-card {
             width: 100%; height: 100%;
             scroll-snap-align: start;
             position: relative;
-            background: #111;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            background: #000;
+            display: flex; align-items: center; justify-content: center;
         }
 
-        .video-bg {
-            position: absolute; width: 100%; height: 100%;
-            object-fit: cover; opacity: 0.85;
+        video {
+            width: 100%; height: 100%;
+            object-fit: cover;
         }
 
-        /* Overlay UI Elements */
-        .overlay-top {
-            position: absolute; top: 20px; left: 0; width: 100%;
-            display: flex; justify-content: center; z-index: 10;
-            font-weight: 800; letter-spacing: 1px; font-size: 15px; text-shadow: 0 2px 4px rgba(0,0,0,0.6);
-            color: #38bdf8;
+        /* Top Header Navigation */
+        .top-header {
+            position: absolute; top: 15px; left: 0; width: 100%;
+            display: flex; justify-content: center; align-items: center; gap: 20px;
+            z-index: 20; font-weight: 700; font-size: 16px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+        }
+        .top-header span { opacity: 0.6; cursor: pointer; }
+        .top-header span.active { opacity: 1; border-bottom: 2px solid #38bdf8; padding-bottom: 4px; color: #38bdf8; }
+
+        /* Right Action Bar (Likes, Comments, Share, Audio) */
+        .right-actions {
+            position: absolute; right: 12px; bottom: 90px;
+            display: flex; flex-direction: column; align-items: center; gap: 18px; z-index: 20;
         }
 
-        .overlay-right {
-            position: absolute; right: 16px; bottom: 80px;
-            display: flex; flex-direction: column; align-items: center; gap: 20px; z-index: 10;
+        .avatar-box {
+            position: relative; margin-bottom: 6px;
+        }
+        .avatar-img {
+            width: 48px; height: 48px; border-radius: 50%; border: 2px solid #fff; object-fit: cover;
+        }
+        .follow-badge {
+            position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%);
+            background: #ef4444; color: #fff; border-radius: 50%; width: 18px; height: 18px;
+            display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold;
         }
 
         .action-btn {
-            background: rgba(0, 0, 0, 0.4); border: none; width: 48px; height: 48px;
-            border-radius: 24px; display: flex; flex-direction: column; align-items: center;
-            justify-content: center; color: #fff; font-size: 20px; cursor: pointer; backdrop-filter: blur(4px);
+            background: none; border: none; color: #fff; display: flex; flex-direction: column;
+            align-items: center; cursor: pointer; text-shadow: 0 2px 4px rgba(0,0,0,0.8);
         }
-        .action-btn span { font-size: 11px; margin-top: 2px; font-weight: 600; }
+        .action-icon {
+            width: 40px; height: 40px; background: rgba(0,0,0,0.4); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; font-size: 22px;
+            backdrop-filter: blur(4px); transition: transform 0.15s ease;
+        }
+        .action-btn:active .action-icon { transform: scale(0.85); }
+        .action-count { font-size: 11px; margin-top: 4px; font-weight: 600; }
 
-        .overlay-bottom {
-            position: absolute; left: 16px; bottom: 30px; right: 80px; z-index: 10;
-            text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+        /* Spinning Audio Record Disk */
+        .music-disc {
+            width: 42px; height: 42px; border-radius: 50%; background: #222; border: 8px solid #111;
+            display: flex; align-items: center; justify-content: center; animation: spin 4s linear infinite;
         }
-        .creator-name { font-size: 16px; font-weight: 700; margin-bottom: 6px; color: #f8fafc; }
-        .video-caption { font-size: 13px; color: #cbd5e1; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        /* Ad Banner Placeholder */
-        .ad-banner {
-            position: absolute; bottom: 0; left: 0; width: 100%; height: 50px;
-            background: rgba(15, 23, 42, 0.95); border-top: 1px solid rgba(255,255,255,0.1);
-            display: flex; align-items: center; justify-content: space-between; padding: 0 16px; z-index: 20;
+        /* Bottom Details (User info, caption, music tag) */
+        .bottom-details {
+            position: absolute; left: 16px; bottom: 80px; right: 80px; z-index: 20;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.9);
         }
-        .ad-tag { background: #eab308; color: #000; font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 4px; }
-        .ad-text { font-size: 12px; color: #94a3b8; }
+        .username { font-size: 16px; font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+        .caption { font-size: 13px; color: #f1f5f9; line-height: 1.4; margin-bottom: 8px; }
+        .music-tag { font-size: 12px; color: #cbd5e1; display: flex; align-items: center; gap: 6px; }
+
+        /* Bottom Ad Banner (Monetization Slot) */
+        .ad-banner-slot {
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 55px;
+            background: rgba(15, 23, 42, 0.95); border-top: 1px solid rgba(255, 255, 255, 0.15);
+            display: flex; align-items: center; justify-content: space-between; padding: 0 16px; z-index: 30;
+        }
+        .ad-pill { background: #eab308; color: #000; font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 4px; }
+        .ad-title { font-size: 12px; color: #f8fafc; font-weight: 600; }
+        .ad-cta { background: #38bdf8; color: #0f172a; font-size: 12px; font-weight: 700; padding: 6px 14px; border-radius: 20px; }
+
+        /* Interactive Comments Drawer Slide-Up Panel */
+        #comment-drawer {
+            position: absolute; bottom: -100%; left: 0; width: 100%; height: 60%;
+            background: #1e293b; border-radius: 16px 16px 0 0; z-index: 40;
+            transition: bottom 0.3s ease; display: flex; flex-direction: column; padding: 16px;
+        }
+        #comment-drawer.open { bottom: 0; }
+        .drawer-header { display: flex; justify-content: space-between; align-items: center; font-weight: 700; font-size: 14px; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; }
+        .comment-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+        .comment-item { font-size: 13px; color: #cbd5e1; }
+        .comment-user { font-weight: 700; color: #fff; margin-bottom: 2px; }
+        .comment-input-box { display: flex; gap: 8px; margin-top: 12px; }
+        .comment-input-box input { flex: 1; background: #0f172a; border: 1px solid rgba(255,255,255,0.2); border-radius: 20px; padding: 8px 14px; color: #fff; outline: none; }
+        .comment-input-box button { background: #38bdf8; border: none; border-radius: 20px; padding: 0 16px; color: #0f172a; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <div class="overlay-top">APEX VYBE</div>
+    <!-- Header Navigation -->
+    <div class="top-header">
+        <span>Following</span>
+        <span class="active">For You</span>
+    </div>
 
+    <!-- Infinite Scroll Feed -->
     <div id="feed-container">
-        <!-- Card 1 -->
+        
+        <!-- Video 1 -->
         <div class="video-card">
-            <!-- Simulated Video Source (Replace with MP4 links or WebGL shaders) -->
-            <div style="position: absolute; width:100%; height:100%; background: linear-gradient(135deg, #1e1b4b, #312e81);"></div>
+            <video loop playsinline muted poster="https://picsum.photos/400/800?random=1" src="https://assets.mixkit.co/videos/preview/mixkit-vertical-shot-of-a-neon-lit-city-street-41555-large.mp4"></video>
             
-            <div class="overlay-right">
-                <button class="action-btn" onclick="toggleLike(this)">❤️<span>1.2k</span></button>
-                <button class="action-btn">💬<span>84</span></button>
-                <button class="action-btn">↗️<span>Share</span></button>
+            <div class="right-actions">
+                <div class="avatar-box">
+                    <img class="avatar-img" src="https://picsum.photos/100/100?random=11" alt="Avatar">
+                    <div class="follow-badge" onclick="this.style.display='none'">+</div>
+                </div>
+                <button class="action-btn" onclick="toggleLike(this)">
+                    <div class="action-icon">❤️</div>
+                    <span class="action-count">12.4k</span>
+                </button>
+                <button class="action-btn" onclick="openComments()">
+                    <div class="action-icon">💬</div>
+                    <span class="action-count">342</span>
+                </button>
+                <button class="action-btn" onclick="shareVideo()">
+                    <div class="action-icon">↗️</div>
+                    <span class="action-count">Share</span>
+                </button>
+                <div class="music-disc">🎵</div>
             </div>
 
-            <div class="overlay-bottom">
-                <div class="creator-name">@apex_creator</div>
-                <div class="video-caption">Building modern cross-platform web utilities independently via GitHub & Mobile Wrappers! 🚀 #ApexMobility #Coding</div>
+            <div class="bottom-details">
+                <div class="username">@apex_creator</div>
+                <div class="caption">Testing APEX VYBE mobile feed mechanics! Fast, fluid, and scalable. 🚀 #ApexMobility #Tech</div>
+                <div class="music-tag">🎵 Original Sound - Apex Audio</div>
             </div>
         </div>
 
-        <!-- Card 2 -->
+        <!-- Video 2 -->
         <div class="video-card">
-            <div style="position: absolute; width:100%; height:100%; background: linear-gradient(135deg, #064e3b, #022c22);"></div>
+            <video loop playsinline muted poster="https://picsum.photos/400/800?random=2" src="https://assets.mixkit.co/videos/preview/mixkit-hands-holding-a-smartphone-with-green-screen-41544-large.mp4"></video>
             
-            <div class="overlay-right">
-                <button class="action-btn" onclick="toggleLike(this)">❤️<span>3.5k</span></button>
-                <button class="action-btn">💬<span>210</span></button>
-                <button class="action-btn">↗️<span>Share</span></button>
+            <div class="right-actions">
+                <div class="avatar-box">
+                    <img class="avatar-img" src="https://picsum.photos/100/100?random=12" alt="Avatar">
+                    <div class="follow-badge" onclick="this.style.display='none'">+</div>
+                </div>
+                <button class="action-btn" onclick="toggleLike(this)">
+                    <div class="action-icon">❤️</div>
+                    <span class="action-count">48.9k</span>
+                </button>
+                <button class="action-btn" onclick="openComments()">
+                    <div class="action-icon">💬</div>
+                    <span class="action-count">1.1k</span>
+                </button>
+                <button class="action-btn" onclick="shareVideo()">
+                    <div class="action-icon">↗️</div>
+                    <span class="action-count">Share</span>
+                </button>
+                <div class="music-disc">🎧</div>
             </div>
 
-            <div class="overlay-bottom">
-                <div class="creator-name">@sledge_beats</div>
-                <div class="video-caption">Late night studio sessions producing raw hip-hop and electronic soundscapes. 🎧✨ #ProducerLife</div>
+            <div class="bottom-details">
+                <div class="username">@sledge_beats</div>
+                <div class="caption">Studio vibes late night. What genre should we cook up next? 🥁🔥 #MusicProducer #Studio</div>
+                <div class="music-tag">🎵 Sledge Beats - Midnight Beat</div>
             </div>
         </div>
+
     </div>
 
     <!-- Monetization Banner Ad Slot -->
-    <div class="ad-banner">
+    <div class="ad-banner-slot">
         <div style="display: flex; align-items: center; gap: 10px;">
-            <span class="ad-tag">AD</span>
-            <span class="ad-text">Discover APEX Utilities & Tools</span>
+            <span class="ad-pill">SPONSORED</span>
+            <span class="ad-title">APEX Mobility Ecosystem</span>
         </div>
-        <span style="font-size: 11px; color: #38bdf8; font-weight: 700;">Install</span>
+        <div class="ad-cta">Explore</div>
     </div>
 
+    <!-- Interactive Comments Slide-Up Panel -->
+    <div id="comment-drawer">
+        <div class="drawer-header">
+            <span>Comments (342)</span>
+            <span style="cursor:pointer;" onclick="closeComments()">✕</span>
+        </div>
+        <div class="comment-list" id="comment-list">
+            <div class="comment-item">
+                <div class="comment-user">@dev_user</div>
+                <div>This video feed scrolling feels super fast! 🔥</div>
+            </div>
+            <div class="comment-item">
+                <div class="comment-user">@creative_mind</div>
+                <div>APEX VYBE looking awesome! Can't wait for the app store drop.</div>
+            </div>
+        </div>
+        <div class="comment-input-box">
+            <input type="text" id="new-comment" placeholder="Add a comment...">
+            <button onclick="postComment()">Post</button>
+        </div>
+    </div>
+
+    <!-- TikTok Feed Controller Engine -->
     <script>
+        // Auto-play videos as user scrolls (Intersection Observer)
+        const videos = document.querySelectorAll('video');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.play().catch(e => console.log("Tap to enable sound"));
+                } else {
+                    entry.target.pause();
+                }
+            });
+        }, { threshold: 0.6 });
+
+        videos.forEach(v => observer.observe(v));
+
+        // Tap screen video to toggle mute/unmute
+        videos.forEach(v => {
+            v.addEventListener('click', () => {
+                v.muted = !v.muted;
+            });
+        });
+
+        // Like button toggle functionality
         function toggleLike(btn) {
-            let countSpan = btn.querySelector('span');
-            let currentLikes = parseFloat(countSpan.innerText);
-            if (btn.style.color === 'rgb(239, 68, 68)') {
-                btn.style.color = '#fff';
-                countSpan.innerText = (currentLikes - 0.1).toFixed(1) + 'k';
+            const icon = btn.querySelector('.action-icon');
+            if (icon.style.color === 'rgb(239, 68, 68)') {
+                icon.style.color = '#fff';
             } else {
-                btn.style.color = '#ef4444';
-                countSpan.innerText = (currentLikes + 0.1).toFixed(1) + 'k';
+                icon.style.color = '#ef4444';
+            }
+        }
+
+        // Comment Drawer Controls
+        function openComments() {
+            document.getElementById('comment-drawer').classList.add('open');
+        }
+        function closeComments() {
+            document.getElementById('comment-drawer').classList.remove('open');
+        }
+        function postComment() {
+            const input = document.getElementById('new-comment');
+            if (input.value.trim() !== '') {
+                const list = document.getElementById('comment-list');
+                const item = document.createElement('div');
+                item.className = 'comment-item';
+                item.innerHTML = `<div class="comment-user">@you</div><div>${input.value}</div>`;
+                list.prepend(item);
+                input.value = '';
+            }
+        }
+
+        // Native Mobile Web Share API
+        function shareVideo() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'APEX VYBE',
+                    text: 'Check out this video on APEX VYBE!',
+                    url: window.location.href,
+                });
+            } else {
+                alert("Link copied to clipboard!");
             }
         }
     </script>
