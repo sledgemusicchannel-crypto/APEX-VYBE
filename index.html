@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>APEX VYBE</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+        body, html { width: 100%; height: 100%; overflow: hidden; background: #000; color: #fff; }
+        
+        #feed-container {
+            width: 100%; height: 100%;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            scrollbar-width: none;
+        }
+        #feed-container::-webkit-scrollbar { display: none; }
+
+        .video-card {
+            width: 100%; height: 100%;
+            scroll-snap-align: start;
+            position: relative;
+            background: #111;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .video-bg {
+            position: absolute; width: 100%; height: 100%;
+            object-fit: cover; opacity: 0.85;
+        }
+
+        /* Overlay UI Elements */
+        .overlay-top {
+            position: absolute; top: 20px; left: 0; width: 100%;
+            display: flex; justify-content: center; z-index: 10;
+            font-weight: 800; letter-spacing: 1px; font-size: 15px; text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+            color: #38bdf8;
+        }
+
+        .overlay-right {
+            position: absolute; right: 16px; bottom: 80px;
+            display: flex; flex-direction: column; align-items: center; gap: 20px; z-index: 10;
+        }
+
+        .action-btn {
+            background: rgba(0, 0, 0, 0.4); border: none; width: 48px; height: 48px;
+            border-radius: 24px; display: flex; flex-direction: column; align-items: center;
+            justify-content: center; color: #fff; font-size: 20px; cursor: pointer; backdrop-filter: blur(4px);
+        }
+        .action-btn span { font-size: 11px; margin-top: 2px; font-weight: 600; }
+
+        .overlay-bottom {
+            position: absolute; left: 16px; bottom: 30px; right: 80px; z-index: 10;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+        }
+        .creator-name { font-size: 16px; font-weight: 700; margin-bottom: 6px; color: #f8fafc; }
+        .video-caption { font-size: 13px; color: #cbd5e1; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+        /* Ad Banner Placeholder */
+        .ad-banner {
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 50px;
+            background: rgba(15, 23, 42, 0.95); border-top: 1px solid rgba(255,255,255,0.1);
+            display: flex; align-items: center; justify-content: space-between; padding: 0 16px; z-index: 20;
+        }
+        .ad-tag { background: #eab308; color: #000; font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 4px; }
+        .ad-text { font-size: 12px; color: #94a3b8; }
+    </style>
+</head>
+<body>
+
+    <div class="overlay-top">APEX VYBE</div>
+
+    <div id="feed-container">
+        <!-- Card 1 -->
+        <div class="video-card">
+            <!-- Simulated Video Source (Replace with MP4 links or WebGL shaders) -->
+            <div style="position: absolute; width:100%; height:100%; background: linear-gradient(135deg, #1e1b4b, #312e81);"></div>
+            
+            <div class="overlay-right">
+                <button class="action-btn" onclick="toggleLike(this)">❤️<span>1.2k</span></button>
+                <button class="action-btn">💬<span>84</span></button>
+                <button class="action-btn">↗️<span>Share</span></button>
+            </div>
+
+            <div class="overlay-bottom">
+                <div class="creator-name">@apex_creator</div>
+                <div class="video-caption">Building modern cross-platform web utilities independently via GitHub & Mobile Wrappers! 🚀 #ApexMobility #Coding</div>
+            </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="video-card">
+            <div style="position: absolute; width:100%; height:100%; background: linear-gradient(135deg, #064e3b, #022c22);"></div>
+            
+            <div class="overlay-right">
+                <button class="action-btn" onclick="toggleLike(this)">❤️<span>3.5k</span></button>
+                <button class="action-btn">💬<span>210</span></button>
+                <button class="action-btn">↗️<span>Share</span></button>
+            </div>
+
+            <div class="overlay-bottom">
+                <div class="creator-name">@sledge_beats</div>
+                <div class="video-caption">Late night studio sessions producing raw hip-hop and electronic soundscapes. 🎧✨ #ProducerLife</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Monetization Banner Ad Slot -->
+    <div class="ad-banner">
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <span class="ad-tag">AD</span>
+            <span class="ad-text">Discover APEX Utilities & Tools</span>
+        </div>
+        <span style="font-size: 11px; color: #38bdf8; font-weight: 700;">Install</span>
+    </div>
+
+    <script>
+        function toggleLike(btn) {
+            let countSpan = btn.querySelector('span');
+            let currentLikes = parseFloat(countSpan.innerText);
+            if (btn.style.color === 'rgb(239, 68, 68)') {
+                btn.style.color = '#fff';
+                countSpan.innerText = (currentLikes - 0.1).toFixed(1) + 'k';
+            } else {
+                btn.style.color = '#ef4444';
+                countSpan.innerText = (currentLikes + 0.1).toFixed(1) + 'k';
+            }
+        }
+    </script>
+</body>
+</html>
